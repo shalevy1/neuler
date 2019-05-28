@@ -41,7 +41,7 @@ export default {
         "Louvain": {
             Form: LouvainForm,
             parametersBuilder: communityParams,
-            service: runAlgorithm,
+            service: louvain,
             ResultView: LouvainResult,
             parameters: {
                 direction: 'Both',

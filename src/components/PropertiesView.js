@@ -24,7 +24,7 @@ export const extractHiddenProperties = (labels, hiddenPropertiesMap) => {
   return Array.from(hiddenProps)
 }
 
-const PropertiesView = ({ labels, properties, hideProp, resetLabelsProperties, hiddenProperties = {} }) => {
+const PropertiesView = ({ labels, properties, inline = false, hideProp, resetLabelsProperties, hiddenProperties = {} }) => {
   const hiddenProps = extractHiddenProperties(labels, hiddenProperties)
 
   const resetButton = hiddenProps.length > 0
@@ -37,12 +37,18 @@ const PropertiesView = ({ labels, properties, hideProp, resetLabelsProperties, h
     </Grid.Column>
     : null
 
+  const style ={ maxWidth: '20em', padding: '0.5em' }
+  if(inline) {
+    style["marginTop"] = '0.5em'
+    style["marginBottom"] = '0.5em'
+  }
+
   return <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
     <Grid columns={4} style={{ width: '100%' }}>
       {Object.keys(properties)
         .filter(key => !hiddenProps.includes(key))
         .map(key =>
-          <Grid.Column key={key} style={{ maxWidth: '20em', padding: '0.5em' }}>
+          <Grid.Column key={key} style={style}>
             <PropertyCell propertyKey={key} value={properties[key]} hideProp={key => hideProp(labels, key)}
                           labels={labels}/>
           </Grid.Column>

@@ -28,6 +28,45 @@ export const runAlgorithm = ({streamCypher, storeCypher, fetchCypher, parameters
   }
 }
 
+export const louvain = ({streamCypher, storeCypher, fetchCypher, parameters, persisted}) => {
+  return runAlgorithm({
+    streamCypher, storeCypher, fetchCypher, parameters, persisted, parseResultStreamFn: result => {
+      if (result.records) {
+        return result.records.map(record => {
+          const nodes = record.get('nodes')
+
+          return {
+            community: record.get('community').toNumber(),
+            nodes: nodes.map(node => { return { "properties": parseProperties(node.properties), "labels": node.labels } }) ,
+            size: record.get('size').toNumber(),
+          }
+        })
+      } else {
+        console.error(result.error)
+        throw new Error(result.error)
+      }
+    }
+  })
+}
+
+// export const parseResultStream = (result) => {
+//   if (result.records) {
+//     return result.records.map(record => {
+//       const {properties, labels} = record.get('node')
+//       const communities = record.has("communities") ? record.get("communities") : null
+//       return {
+//         properties: parseProperties(properties),
+//         labels: labels,
+//         community: record.get('community').toNumber(),
+//         communities: communities ? communities.map(value => value.toNumber()).toString() : null
+//       }
+//     })
+//   } else {
+//     console.error(result.error)
+//     throw new Error(result.error)
+//   }
+// }
+
 export const triangles = ({streamCypher, parameters}) => {
   return runStreamingAlgorithm(streamCypher, parameters, result => {
     if (result.records) {

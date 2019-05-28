@@ -22,7 +22,9 @@ LIMIT $limit`
 
 export const getFetchLouvainCypher = label => `MATCH (node${label ? ':' + label : ''})
 WHERE not(node[$config.writeProperty] is null)
-RETURN node, node[$config.writeProperty] AS community, node[$config.intermediateCommunitiesWriteProperty] as communities
+WITH node[$config.writeProperty] AS community, collect(node) AS allNodes
+RETURN community, allNodes[..10] AS nodes, size(allNodes) AS size 
+ORDER BY size DESC
 LIMIT $limit`
 
 export const getCommunityFetchCypher = label => `MATCH (node${label ? ':' + label : ''})
